@@ -3,6 +3,7 @@ package com.cbt.cbtapp.config;
 import com.cbt.cbtapp.repository.UserRepository;
 import com.cbt.cbtapp.security.AuthEntryPointJwt;
 import com.cbt.cbtapp.security.JwtAuthenticationFilter;
+import com.cbt.cbtapp.security.JwtUtils;
 import com.cbt.cbtapp.security.UserPrincipalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,55 +33,14 @@ public class SecurityConfiguration {
     private final UserRepository userRepository;
 
     @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
     public SecurityConfiguration(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return http
-//                .csrf()
-//                .disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers(AntPathRequestMatcher
-//                                .antMatcher("/"),
-//                        AntPathRequestMatcher
-//                                .antMatcher("register"),
-//                        AntPathRequestMatcher
-//                                .antMatcher("/register/**"),
-//                        AntPathRequestMatcher
-//                                .antMatcher("/error"),
-//                        AntPathRequestMatcher
-//                                .antMatcher("/favicon.ico"),
-//                        AntPathRequestMatcher
-//                .antMatcher("/api/v1/auth/update_password"),
-//                                       //.hasAuthority("CHANGE_PASSWORD_AUTHORITY"),
-//                        AntPathRequestMatcher
-//                                .antMatcher("/actuator/*"),
-//                        AntPathRequestMatcher
-//                                .antMatcher("/api/v1/auth/*")
-//                )
-//                .permitAll()
-//                .anyRequest()
-//                .permitAll()
-//                .and()
-////                .sessionManagement()
-////                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .sessionFixation().none()
-//                .invalidSessionUrl("/login?invalid-session")
-//                .maximumSessions(1)
-//                .maxSessionsPreventsLogin(true)
-//                .and()
-//                .authenticationProvider(authenticationProvider())
-//                .addFilterBefore(new JwtAuthenticationFilter(userDetailsService()), UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//
-//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -98,7 +58,7 @@ public class SecurityConfiguration {
 
         http.authenticationProvider(authenticationProvider());
 
-        http.addFilterBefore(new JwtAuthenticationFilter(userDetailsService()), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtils, userDetailsService()), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

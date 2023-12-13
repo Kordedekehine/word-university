@@ -5,6 +5,7 @@ import com.cbt.cbtapp.dto.WordLearnAnswersDto;
 import com.cbt.cbtapp.dto.WordLearningPracticeDto;
 import com.cbt.cbtapp.dto.WordLearningPracticeVerifyDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
+import com.cbt.cbtapp.exception.authentication.AuthenticationRequiredException;
 import com.cbt.cbtapp.model.*;
 import com.cbt.cbtapp.repository.CourseEnrollmentRepository;
 import com.cbt.cbtapp.repository.LessonRepository;
@@ -54,6 +55,7 @@ public class LessonPracticeService {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<Lesson> lessonOptional = lessonRepository.findById(lessonId);
+
         if (lessonOptional.isEmpty()){
             throw new RuntimeException("Lesson ID does not exist!");
         }
@@ -69,7 +71,6 @@ public class LessonPracticeService {
         //check if student enrolled
         Optional<CourseEnrollment> courseEnrollment =
                 courseEnrollmentRepository.findByCourseAndStudent(lesson.getCourse(), student);
-
 
         List<WordToLearn> wordsToLearn = wordToLearnRepository.findByLessonAndCourseEnrollmentAndCollectedPoints(
                 lesson, courseEnrollment.get(), course.getMinPointsPerWord());
@@ -97,7 +98,6 @@ public class LessonPracticeService {
     private boolean randomTranslate() {
         return new Random().nextBoolean();
     }
-
 
     public WordLearningPracticeVerifyDto practiceVerifyDto(WordLearnAnswersDto wordLearnAnswersDto) throws AccessRestrictedToStudentsException {
         Student student = authenticationService.getCurrentStudent();
@@ -153,4 +153,6 @@ public class LessonPracticeService {
                 wordLearnAnswersDto.isForeignToNative());
 
     }
+
+
 }

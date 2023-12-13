@@ -25,7 +25,7 @@ public class StudentCourseManagementController {
     @Autowired
     private StudentCourseAndLessonManageService service;
 
-    @PostMapping("/create_course")
+    @PostMapping("/create_selfTaught_course")
     public ResponseEntity<?> createSelfTaughtCourse(@Valid @RequestBody SelfTaughtCourseDto selfTaughtCourseDto) throws AccessRestrictedToStudentsException, LanguageNotFoundException, LanguageNotFoundException, AccessRestrictedToStudentsException {
     return new ResponseEntity<>(service.createSelfTaughtCourse(selfTaughtCourseDto), HttpStatus.CREATED);
     }

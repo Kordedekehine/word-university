@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/lesson_management")
+@RequestMapping("/api/v1/auth")
 public class LessonManagementController {
 
     @Autowired
     private LessonManagementService lessonManagementService;
 
-    @GetMapping("/get_lesson_data")
+    @GetMapping("/get_student_lesson_data")
     public ResponseEntity<?> getLessonData(@RequestParam Long lessonId)  {
         try {
             return new ResponseEntity<>(lessonManagementService.getLessonData(lessonId), HttpStatus.ACCEPTED);
@@ -29,7 +29,7 @@ public class LessonManagementController {
         }
     }
 
-    @GetMapping(value = "/get_lesson_file", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/get_student_lesson_file", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getLessonFile(@RequestParam Long lessonId) throws IOException {
 
             byte[] file = lessonManagementService.getLessonsFile(lessonId);

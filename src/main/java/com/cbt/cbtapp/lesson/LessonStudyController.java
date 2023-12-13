@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 
 @RestController
-@RequestMapping("/lessonStudy")
+@RequestMapping("/api/v1/auth")
 public class LessonStudyController {
 
     @Autowired
     private LessonStudyService lessonStudyService;
 
-    @GetMapping("/")
+    @GetMapping("/get_all_languages")
     private ResponseEntity<?> getAllLanguages(){
         return new ResponseEntity<>(lessonStudyService.getAllLanguages(), HttpStatus.ACCEPTED);
     }

@@ -17,4 +17,6 @@ public class ScoreUpdater {
             return currentPoints + BAD_ANSWER;
         }
     }
+
+
 }

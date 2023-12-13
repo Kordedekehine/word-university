@@ -2,8 +2,11 @@ package com.cbt.cbtapp.repository;
 
 import com.cbt.cbtapp.model.CourseEnrollment;
 import com.cbt.cbtapp.model.Lesson;
+import com.cbt.cbtapp.model.Student;
 import com.cbt.cbtapp.model.WordToLearn;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +20,7 @@ public interface WordToLearnRepository extends JpaRepository<WordToLearn,Long> {
                                                                          String word);
 
      List<WordToLearn> findByLesson(Lesson lesson);
+
 
     List<WordToLearn> findByLessonAndCourseEnrollmentAndCollectedPoints(Lesson lesson, CourseEnrollment courseEnrollment,
                                                                                 int targetPoints);

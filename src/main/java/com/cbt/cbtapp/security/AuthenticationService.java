@@ -10,6 +10,7 @@ import com.cbt.cbtapp.model.User;
 import com.cbt.cbtapp.repository.StudentRepository;
 import com.cbt.cbtapp.repository.TeacherRepository;
 import com.cbt.cbtapp.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 
 @Service
+@Slf4j
 public class AuthenticationService {
 
     @Autowired
@@ -32,17 +34,21 @@ public class AuthenticationService {
     @Autowired
     private StudentRepository studentRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+
 
 
     public User getCurrentUser() throws AuthenticationRequiredException {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         Optional<User> optUser =
                 userRepository.findByUserName(((AppUser) auth.getPrincipal()).getUsername());
+
         if (optUser.isEmpty()) {
-            logger.warn("User tried to access resource without being authenticated");
+            log.warn("User tried to access resource without being authenticated");
             throw new AuthenticationRequiredException();
         }
+
         return optUser.get();
     }
 
@@ -52,7 +58,7 @@ public class AuthenticationService {
         Optional<Teacher> optUser =
                 teacherRepository.findByUserName(((AppUser) auth.getPrincipal()).getUsername());
         if (optUser.isEmpty()) {
-            logger.warn("Non-Teacher User tried to access Teacher-Only resources.");
+            log.warn("Non-Teacher User tried to access Teacher-Only resources.");
             throw new AccessRestrictedToTeachersException();
         }
         return optUser.get();
@@ -64,7 +70,7 @@ public class AuthenticationService {
         Optional<Student> optUser =
                 studentRepository.findByUserName(((AppUser) auth.getPrincipal()).getUsername());
         if (optUser.isEmpty()) {
-            logger.warn("Non-Student User tried to access Student-Only resources.");
+            log.warn("Non-Student User tried to access Student-Only resources.");
             throw new AccessRestrictedToStudentsException();
         }
         return optUser.get();

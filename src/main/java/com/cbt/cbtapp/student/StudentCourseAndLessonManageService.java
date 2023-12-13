@@ -1,10 +1,9 @@
 package com.cbt.cbtapp.student;
 
 
-import com.cbt.cbtapp.dto.EnrolledCourseDto;
-import com.cbt.cbtapp.dto.ExtendedEnrolledCourseDto;
-import com.cbt.cbtapp.dto.SelfTaughtCourseDto;
+import com.cbt.cbtapp.dto.*;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
+import com.cbt.cbtapp.exception.authentication.AuthenticationRequiredException;
 import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.DuplicateEnrollmentException;
@@ -16,8 +15,10 @@ import com.cbt.cbtapp.repository.*;
 import com.cbt.cbtapp.security.AuthenticationService;
 import com.cbt.cbtapp.verifier.RightVerifier;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -56,7 +57,11 @@ public class StudentCourseAndLessonManageService {
     @Autowired
     private RightVerifier rightVerifier;
 
-    public SelfTaughtCourse createSelfTaughtCourse(SelfTaughtCourseDto selfTaughtCourseDTO) throws AccessRestrictedToStudentsException, LanguageNotFoundException {
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Transactional
+    public SelfTaughtLessonDto createSelfTaughtCourse(SelfTaughtCourseDto selfTaughtCourseDTO) throws AccessRestrictedToStudentsException, LanguageNotFoundException {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<Language> optLanguage =
@@ -75,7 +80,11 @@ public class StudentCourseAndLessonManageService {
 
         SelfTaughtCourse savedCourse = selfTaughtCourseRepository.save(selfTaughtCourse);
 
-        return savedCourse;
+        SelfTaughtLessonDto selfTaughtResponseDto = new SelfTaughtLessonDto();
+
+        modelMapper.map(savedCourse,selfTaughtResponseDto);
+
+        return selfTaughtResponseDto;
     }
 
 
@@ -98,7 +107,8 @@ public class StudentCourseAndLessonManageService {
                 .collect(Collectors.toList());
     }
 
-    public SelfTaughtLesson saveNewSelfTaughtLesson(Long courseId, String title, MultipartFile file) throws AccessRestrictedToStudentsException, CourseNotFoundException, FileStorageException, InvalidCourseAccessException {
+    @Transactional
+    public SelfTaughtLessonResponseDto saveNewSelfTaughtLesson(Long courseId, String title, MultipartFile file) throws AccessRestrictedToStudentsException, CourseNotFoundException, FileStorageException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<SelfTaughtCourse> optCourse = selfTaughtCourseRepository.findById(courseId);
@@ -120,7 +130,11 @@ public class StudentCourseAndLessonManageService {
 
         lessonStorageService.storeLesson(file, savedLesson.getId());
 
-        return savedLesson;
+        SelfTaughtLessonResponseDto selfTaughtLessonResponseDto = new SelfTaughtLessonResponseDto();
+
+        modelMapper.map(savedLesson,selfTaughtLessonResponseDto);
+
+        return selfTaughtLessonResponseDto;
     }
 
     public ExtendedEnrolledCourseDto getEnrolledCourseData(Long courseId) throws AccessRestrictedToStudentsException, InvalidCourseAccessException, CourseNotFoundException {
@@ -171,6 +185,7 @@ public class StudentCourseAndLessonManageService {
         return "Student successfully enrolled in course";
 
     }
+
 
 
 }

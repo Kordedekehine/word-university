@@ -3,6 +3,7 @@ package com.cbt.cbtapp.exception;
 import com.cbt.cbtapp.exception.authentication.*;
 import com.cbt.cbtapp.exception.lessons.DuplicateWordToLearnException;
 import com.cbt.cbtapp.exception.lessons.NoWordsToLearnException;
+import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.DuplicateEnrollmentException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
@@ -21,10 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Class responsible for returning the corresponding ExceptionResponse, whenever an unhandled
- * exception is thrown in the handler method of a controller.
- */
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
@@ -115,6 +113,14 @@ public class GlobalControllerExceptionHandler {
     ExceptionResponse handleIncorrectPasswordException(
             Exception ex) {
         return new ExceptionResponse(List.of("Incorrect Password! Kindly input the correct password :)"));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
+    @ExceptionHandler(CourseNotFoundException.class)
+    public @ResponseBody
+    ExceptionResponse handleCourseNotFoundException(
+            Exception ex) {
+        return new ExceptionResponse(List.of("Course not Found! Please recheck your input :)"));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400

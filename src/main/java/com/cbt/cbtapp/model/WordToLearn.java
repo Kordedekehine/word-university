@@ -35,6 +35,7 @@ public class WordToLearn {
     @JoinColumn(name = "lesson_id", referencedColumnName = "Id")
     private Lesson lesson;
 
+
     public WordToLearn(String originalWord, String translation, Integer collectedPoints, CourseEnrollment courseEnrollment, Lesson lesson) {
         this.originalWord = originalWord;
         this.translation = translation;
