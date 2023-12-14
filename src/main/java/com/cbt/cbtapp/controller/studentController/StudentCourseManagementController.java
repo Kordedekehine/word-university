@@ -1,13 +1,13 @@
-package com.cbt.cbtapp.student;
+package com.cbt.cbtapp.controller.studentController;
 
 import com.cbt.cbtapp.dto.EnrolledCourseDto;
 import com.cbt.cbtapp.dto.SelfTaughtCourseDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
-import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.DuplicateEnrollmentException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
+import com.cbt.cbtapp.service.student.StudentCourseAndLessonManageService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,14 +26,14 @@ public class StudentCourseManagementController {
     private StudentCourseAndLessonManageService service;
 
     @PostMapping("/create_selfTaught_course")
-    public ResponseEntity<?> createSelfTaughtCourse(@Valid @RequestBody SelfTaughtCourseDto selfTaughtCourseDto) throws AccessRestrictedToStudentsException, LanguageNotFoundException, LanguageNotFoundException, AccessRestrictedToStudentsException {
+    public ResponseEntity<?> createSelfTaughtCourse(@Valid @RequestBody SelfTaughtCourseDto selfTaughtCourseDto) throws LanguageNotFoundException, AccessRestrictedToStudentsException {
     return new ResponseEntity<>(service.createSelfTaughtCourse(selfTaughtCourseDto), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/add_new_lesson", consumes =
+    @PostMapping(value = "/add_new_self_taught_lesson", consumes =
             MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addNewSelfTaughtLesson(@RequestParam("file") MultipartFile file, @RequestParam(
-            "title") String title, @RequestParam Long courseId) throws FileStorageException, AccessRestrictedToStudentsException, CourseNotFoundException, InvalidCourseAccessException, CourseNotFoundException, FileStorageException, InvalidCourseAccessException {
+            "title") String title, @RequestParam Long courseId) throws  AccessRestrictedToStudentsException, CourseNotFoundException, InvalidCourseAccessException {
 
     return new ResponseEntity<>(service.saveNewSelfTaughtLesson(courseId, title, file),HttpStatus.CREATED);
     }

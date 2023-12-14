@@ -1,4 +1,4 @@
-package com.cbt.cbtapp.service;
+package com.cbt.cbtapp.service.userService;
 
 
 

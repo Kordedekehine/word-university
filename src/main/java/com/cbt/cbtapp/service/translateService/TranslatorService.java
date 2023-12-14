@@ -1,4 +1,4 @@
-package com.cbt.cbtapp.translate;
+package com.cbt.cbtapp.service.translateService;
 
 import com.cbt.cbtapp.model.Language;
 import com.google.cloud.translate.Translate;

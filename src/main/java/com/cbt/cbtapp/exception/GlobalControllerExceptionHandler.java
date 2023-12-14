@@ -115,6 +115,7 @@ public class GlobalControllerExceptionHandler {
         return new ExceptionResponse(List.of("Incorrect Password! Kindly input the correct password :)"));
     }
 
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     @ExceptionHandler(CourseNotFoundException.class)
     public @ResponseBody

@@ -1,7 +1,10 @@
-package com.cbt.cbtapp.lesson;
+package com.cbt.cbtapp.controller.studentController;
 
 import com.cbt.cbtapp.dto.SaveUnknownWordsDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
+import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
+import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
+import com.cbt.cbtapp.service.lessonService.LessonStudyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -19,18 +22,13 @@ public class LessonStudyController {
     @Autowired
     private LessonStudyService lessonStudyService;
 
-    @GetMapping("/get_all_languages")
-    private ResponseEntity<?> getAllLanguages(){
-        return new ResponseEntity<>(lessonStudyService.getAllLanguages(), HttpStatus.ACCEPTED);
+    @PostMapping("/saveUnknownWords")
+    private ResponseEntity<?> saveUnknownWords(@RequestBody SaveUnknownWordsDto saveUnknownWordsDto) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException {
+            return new ResponseEntity<>(lessonStudyService.saveUnknownWord(saveUnknownWordsDto),HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/saveUnknownWords")
-    private ResponseEntity<?> saveUnknownWords(@RequestBody SaveUnknownWordsDto saveUnknownWordsDto) throws AccessRestrictedToStudentsException {
-            return new ResponseEntity<>(lessonStudyService.saveUnknownWord(saveUnknownWordsDto),HttpStatus.ACCEPTED);
-        }
-
     @GetMapping(value="/get_lesson_notes_in_pdf", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getLessonVocabularyInPdf(@RequestParam Long lessonId) throws AccessRestrictedToStudentsException {
+    public ResponseEntity<InputStreamResource> getLessonVocabularyInPdf(@RequestParam Long lessonId) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException {
 
         ByteArrayInputStream vocabularyPDF = lessonStudyService.getLessonVocabularyInPdf(lessonId);
 

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -35,6 +37,8 @@ public abstract class User {
     @OneToOne
     @JoinColumn(name = "language_id", nullable = false)
     private Language nativeLanguage;
+
+    private Instant created;
 
     public User(String userName, String password,Role createRole, String email, Language nativeLanguage) {
         this.userName = userName;

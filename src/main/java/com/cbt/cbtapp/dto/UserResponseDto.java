@@ -1,6 +1,6 @@
 package com.cbt.cbtapp.dto;
 
-import com.cbt.cbtapp.model.*;
+import com.cbt.cbtapp.model.Role;
 import lombok.*;
 
 import java.time.Instant;
@@ -10,7 +10,9 @@ import java.time.Instant;
 @Getter
 @Builder
 @Setter
-public class UserRequestDto {
+public class UserResponseDto {
+
+    private Long id;
 
     private String name;
 
@@ -22,8 +24,5 @@ public class UserRequestDto {
 
     private String language;
 
-    private Instant created;
-
-
+    private String created;
 }
-

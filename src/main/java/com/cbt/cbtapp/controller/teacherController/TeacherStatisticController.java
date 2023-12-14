@@ -1,10 +1,10 @@
-package com.cbt.cbtapp.teacher;
+package com.cbt.cbtapp.controller.teacherController;
 
-import com.cbt.cbtapp.dto.CourseStatisticsDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersException;
 import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
+import com.cbt.cbtapp.service.teacher.TeacherStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,17 +1,22 @@
-package com.cbt.cbtapp.lesson;
+package com.cbt.cbtapp.service.lessonService;
 
 
 import com.cbt.cbtapp.dto.WordLearnAnswersDto;
 import com.cbt.cbtapp.dto.WordLearningPracticeDto;
 import com.cbt.cbtapp.dto.WordLearningPracticeVerifyDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
-import com.cbt.cbtapp.exception.authentication.AuthenticationRequiredException;
+import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
+import com.cbt.cbtapp.exception.lessons.WordToLearnNotFoundException;
+import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.model.*;
 import com.cbt.cbtapp.repository.CourseEnrollmentRepository;
 import com.cbt.cbtapp.repository.LessonRepository;
+import com.cbt.cbtapp.repository.ScoreRepository;
 import com.cbt.cbtapp.repository.WordToLearnRepository;
 import com.cbt.cbtapp.security.AuthenticationService;
-import com.cbt.cbtapp.translate.TranslatorService;
+import com.cbt.cbtapp.service.utilService.ScoreUpdater;
+import com.cbt.cbtapp.service.utilService.VocabularyGenerator;
+import com.cbt.cbtapp.service.translateService.TranslatorService;
 import com.cbt.cbtapp.verifier.RightVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +54,18 @@ public class LessonPracticeService {
     @Autowired
     private ScoreUpdater scoreUpdater;
 
+    @Autowired
+    private ScoreRepository scoreRepository;
 
-    public WordLearningPracticeDto solveQuestion(Long lessonId) throws AccessRestrictedToStudentsException {
+
+    public WordLearningPracticeDto solveWordQuestion(Long lessonId) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException, WordToLearnNotFoundException {
 
         Student student = authenticationService.getCurrentStudent();
 
         Optional<Lesson> lessonOptional = lessonRepository.findById(lessonId);
 
         if (lessonOptional.isEmpty()){
-            throw new RuntimeException("Lesson ID does not exist!");
+            throw new LessonNotFoundException();
         }
 
         Lesson lesson = lessonOptional.get();
@@ -65,7 +73,7 @@ public class LessonPracticeService {
         Course course = lesson.getCourse();
 
         if (!rightVerifier.hasAccessToTheDataOf(student,lesson)){
-            throw new RuntimeException("You have no access to this Data");
+            throw new InvalidCourseAccessException();
         }
 
         //check if student enrolled
@@ -77,7 +85,7 @@ public class LessonPracticeService {
 
 
         if (wordsToLearn.isEmpty()) {
-            throw new RuntimeException("No unknown words as for now!");
+            throw new WordToLearnNotFoundException();
         }
 
         WordToLearn wordToLearn = wordsToLearn.get(new Random().nextInt(wordsToLearn.size()));
@@ -99,17 +107,17 @@ public class LessonPracticeService {
         return new Random().nextBoolean();
     }
 
-    public WordLearningPracticeVerifyDto practiceVerifyDto(WordLearnAnswersDto wordLearnAnswersDto) throws AccessRestrictedToStudentsException {
+    public WordLearningPracticeVerifyDto answerWordQuestion(WordLearnAnswersDto wordLearnAnswersDto) throws AccessRestrictedToStudentsException, WordToLearnNotFoundException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<WordToLearn> wordToLearnOptional = wordToLearnRepository.findById(wordLearnAnswersDto.getWordToLearnId());
 
         if (wordToLearnOptional.isEmpty()) {
-            throw new RuntimeException("Word does not exist!");
+            throw new WordToLearnNotFoundException();
         }
 
         if (!rightVerifier.hasAccessToTheDataOf(student, wordToLearnOptional.get().getLesson())) {
-            throw new RuntimeException("You have no access to the data");
+            throw new InvalidCourseAccessException();
         }
 
         WordToLearn wordToLearn = wordToLearnOptional.get();
@@ -138,6 +146,13 @@ public class LessonPracticeService {
                 sourceLanguage, targetLanguage);
 
         wordToLearn.setCollectedPoints(scoreUpdater.getNewPoints(wordToLearn.getCollectedPoints(),isCorrect));
+
+        // Save the score
+        Score score = new Score();
+        score.setStudent(student);
+        score.setLesson(wordToLearn.getLesson());
+        score.setPoints(wordToLearn.getCollectedPoints());
+        scoreRepository.save(score);
 
         return new WordLearningPracticeVerifyDto(
                 wordLearnAnswersDto.getWordToLearnId(),

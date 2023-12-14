@@ -1,4 +1,4 @@
-package com.cbt.cbtapp.teacher;
+package com.cbt.cbtapp.service.teacher;
 
 import com.cbt.cbtapp.dto.CourseStatisticsDto;
 import com.cbt.cbtapp.dto.LessonStatisticsDto;

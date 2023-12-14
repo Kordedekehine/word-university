@@ -1,8 +1,10 @@
-package com.cbt.cbtapp.lesson;
+package com.cbt.cbtapp.service.lessonService;
 
 import com.cbt.cbtapp.dto.LessonResponseDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersException;
+import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
+import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.model.Lesson;
 import com.cbt.cbtapp.model.User;
 import com.cbt.cbtapp.repository.LessonRepository;
@@ -11,6 +13,7 @@ import com.cbt.cbtapp.verifier.RightVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -32,56 +35,53 @@ public class LessonManagementService {
     private RightVerifier rightVerifier;
 
 
-    public byte[] getLessonsFile(Long lessonId) throws IOException {
-
+    @Transactional
+    public byte[] getLessonsFile(Long lessonId) throws IOException, AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException {
         User user;
 
-        try{
+        try {
             user = authenticationService.getCurrentStudent();
-
-        }catch (RuntimeException exception){
-            try{
-               user = authenticationService.getCurrentTeacher();
-            }catch (RuntimeException | AccessRestrictedToTeachersException e){
-                throw new RuntimeException("Unknown user type");
-            }
         } catch (AccessRestrictedToStudentsException e) {
-            throw new RuntimeException(e);
+            try {
+                user = authenticationService.getCurrentTeacher();
+            } catch (AccessRestrictedToTeachersException e1) {
+                throw new AccessRestrictedToStudentsException();
+            }
         }
 
         Optional<Lesson> lesson = lessonRepository.findById(lessonId);
         if (lesson.isEmpty()) {
-            throw new RuntimeException("Lesson does not exist");
+            throw new LessonNotFoundException();
         }
 
         if (!rightVerifier.hasAccessToTheDataOf(user, lesson.get())) {
-            throw new RuntimeException("You have no access to this data");
+            throw new InvalidCourseAccessException();
         }
 
         return lessonStorageService.getLessonFile(lessonId);
     }
 
 
-    public LessonResponseDto getLessonData(Long lessonId) {
+    public LessonResponseDto getLessonData(Long lessonId) throws LessonNotFoundException, InvalidCourseAccessException {
         User user;
 
         try {
             user = authenticationService.getCurrentStudent();
-        } catch (RuntimeException | AccessRestrictedToStudentsException e) {
+        } catch (AccessRestrictedToStudentsException e) {
             try {
                 user = authenticationService.getCurrentTeacher();
-            } catch (RuntimeException | AccessRestrictedToTeachersException exception) {
+            } catch ( AccessRestrictedToTeachersException exception) {
                 throw new IllegalStateException("Unknown user type");
             }
         }
 
         Optional<Lesson> lesson = lessonRepository.findById(lessonId);
         if (lesson.isEmpty()) {
-            throw new RuntimeException("Lesson does not exist");
+            throw new LessonNotFoundException();
         }
 
         if (!rightVerifier.hasAccessToTheDataOf(user, lesson.get())) {
-            throw new RuntimeException("You have no access to this data");
+            throw new InvalidCourseAccessException();
         }
 
         return new LessonResponseDto(

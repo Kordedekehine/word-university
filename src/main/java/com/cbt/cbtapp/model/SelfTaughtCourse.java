@@ -19,7 +19,7 @@ import java.util.Set;
 public class SelfTaughtCourse extends Course {
     @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "creator_id", referencedColumnName = "Id")
-    private Student creator;
+    private Student creator; //only creator not supervisor because it's a self taught cause
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @OrderBy("indexInsideCourse")

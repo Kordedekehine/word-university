@@ -1,19 +1,18 @@
-package com.cbt.cbtapp.teacher;
+package com.cbt.cbtapp.service.teacher;
 
 import com.cbt.cbtapp.dto.ExtendedTaughtCourseDto;
 import com.cbt.cbtapp.dto.SupervisedCourseDto;
 import com.cbt.cbtapp.dto.TaughtCourseDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersException;
-import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
-import com.cbt.cbtapp.lesson.LessonStorageService;
 import com.cbt.cbtapp.model.*;
 import com.cbt.cbtapp.repository.LanguageRepository;
 import com.cbt.cbtapp.repository.SupervisedCourseRepository;
 import com.cbt.cbtapp.repository.SupervisedLessonRepository;
 import com.cbt.cbtapp.security.AuthenticationService;
+import com.cbt.cbtapp.service.lessonService.LessonStorageService;
 import com.cbt.cbtapp.verifier.RightVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +96,7 @@ public class TeacherCourseAndLessonManagementService {
 
     public SupervisedLesson saveNewSupervisedLesson(Long courseId, String title,
                                                     MultipartFile file) throws CourseNotFoundException,
-            FileStorageException, InvalidCourseAccessException, AccessRestrictedToTeachersException {
+             InvalidCourseAccessException, AccessRestrictedToTeachersException {
         Teacher teacher = authenticationService.getCurrentTeacher();
 
         Optional<SupervisedCourse> optCourse = supervisedCourseRepository.findById(courseId);

@@ -37,21 +37,17 @@ public class SupervisedCourse extends Course {
     }
 
 
-    public SupervisedCourse(String title, Integer minPointsPerWord, Language language,
-                            Teacher teacher, Integer joiningCode) {
+    public SupervisedCourse(String title, Integer minPointsPerWord, Language language, Teacher teacher,
+                            Integer joiningCode) {
         super(title, minPointsPerWord, language);
         this.teacher = teacher;
         this.joiningCode = joiningCode;
-        this.lessons = new TreeSet<>();
+        this.lessons = new TreeSet<>(); // Ordering sorts acc to index
     }
 
     public void addLesson(SupervisedLesson lesson) {
         this.lessons.add(lesson);
     }
-
-
-
-
 
     @Override
     public User getSupervisor() {

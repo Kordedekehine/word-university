@@ -1,18 +1,17 @@
-package com.cbt.cbtapp.student;
+package com.cbt.cbtapp.service.student;
 
 
 import com.cbt.cbtapp.dto.*;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
-import com.cbt.cbtapp.exception.authentication.AuthenticationRequiredException;
-import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.DuplicateEnrollmentException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
-import com.cbt.cbtapp.lesson.LessonStorageService;
 import com.cbt.cbtapp.model.*;
 import com.cbt.cbtapp.repository.*;
 import com.cbt.cbtapp.security.AuthenticationService;
+import com.cbt.cbtapp.service.lessonService.LessonScoreService;
+import com.cbt.cbtapp.service.lessonService.LessonStorageService;
 import com.cbt.cbtapp.verifier.RightVerifier;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -58,6 +58,12 @@ public class StudentCourseAndLessonManageService {
     private RightVerifier rightVerifier;
 
     @Autowired
+    private LessonScoreService lessonScoreService;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Transactional
@@ -75,6 +81,7 @@ public class StudentCourseAndLessonManageService {
                 selfTaughtCourseDTO.getMinPointsPerWord(),
                 optLanguage.get(),
                 student);
+
 
         selfTaughtCourse.addCourseEnrollment(student);
 
@@ -108,7 +115,7 @@ public class StudentCourseAndLessonManageService {
     }
 
     @Transactional
-    public SelfTaughtLessonResponseDto saveNewSelfTaughtLesson(Long courseId, String title, MultipartFile file) throws AccessRestrictedToStudentsException, CourseNotFoundException, FileStorageException, InvalidCourseAccessException {
+    public SelfTaughtLessonResponseDto saveNewSelfTaughtLesson(Long courseId, String title, MultipartFile file) throws AccessRestrictedToStudentsException, CourseNotFoundException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<SelfTaughtCourse> optCourse = selfTaughtCourseRepository.findById(courseId);
@@ -185,7 +192,4 @@ public class StudentCourseAndLessonManageService {
         return "Student successfully enrolled in course";
 
     }
-
-
-
 }

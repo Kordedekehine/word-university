@@ -1,4 +1,4 @@
-package com.cbt.cbtapp.lesson;
+package com.cbt.cbtapp.service.utilService;
 
 import com.cbt.cbtapp.model.WordToLearn;
 import com.itextpdf.text.*;

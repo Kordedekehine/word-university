@@ -1,4 +1,5 @@
-package com.cbt.cbtapp.lesson;
+package com.cbt.cbtapp.service.lessonService;
+
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,19 @@ public class LessonStorageService {
     private static final String LESSON_PATH = "lessons/lesson%d.pdf";
 
     @Transactional
-    public void storeLesson(MultipartFile file, Long lessonId)  {
+    public void storeLesson(MultipartFile file, Long lessonId) {
         try {
             if (file.isEmpty()) {
-                throw new RuntimeException("Failed to store empty file.");
+                throw new RuntimeException("Unable to save file! Kindly re-assess the file");
             }
-            Path destinationFile = Path.of(getLessonFilePath(lessonId));
+
+            Path destinationFile = Paths.get(getLessonFilePath(lessonId));
+
+            // Ensure the directory structure exists
+            Files.createDirectories(destinationFile.getParent());
+
             try (InputStream inputStream = file.getInputStream()) {
-                //replace an existing file in the case of edit
+                // Replace an existing file in the case of an edit
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
                 log.info("STORAGE UPDATE - saved content of lesson {}", lessonId);
             }
@@ -34,9 +40,7 @@ public class LessonStorageService {
             log.error("STORAGE FAILURE - saving content of lesson {} failed", lessonId);
             throw new RuntimeException("Failed to store file.", e);
         }
-
     }
-
 
     public byte[] getLessonFile(Long lessonId) throws IOException {
         Path pdfPath = Paths.get(getLessonFilePath(lessonId));
@@ -44,7 +48,7 @@ public class LessonStorageService {
     }
 
     private String getLessonFilePath(Long lessonId) {
-
+        // Use Paths.get for file paths
         return String.format(LESSON_PATH, lessonId);
     }
 

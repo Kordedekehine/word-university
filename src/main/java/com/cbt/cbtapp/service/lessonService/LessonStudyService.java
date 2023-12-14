@@ -1,15 +1,15 @@
-package com.cbt.cbtapp.lesson;
+package com.cbt.cbtapp.service.lessonService;
 
 import com.cbt.cbtapp.dto.SaveUnknownWordResponse;
 import com.cbt.cbtapp.dto.SaveUnknownWordsDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
+import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
+import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.model.*;
-import com.cbt.cbtapp.repository.CourseEnrollmentRepository;
-import com.cbt.cbtapp.repository.LanguageRepository;
-import com.cbt.cbtapp.repository.LessonRepository;
-import com.cbt.cbtapp.repository.WordToLearnRepository;
+import com.cbt.cbtapp.repository.*;
 import com.cbt.cbtapp.security.AuthenticationService;
-import com.cbt.cbtapp.translate.TranslatorService;
+import com.cbt.cbtapp.service.utilService.VocabularyGenerator;
+import com.cbt.cbtapp.service.translateService.TranslatorService;
 import com.cbt.cbtapp.verifier.RightVerifier;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +49,8 @@ public class LessonStudyService {
     private RightVerifier rightVerifier;
 
     @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
     private VocabularyGenerator vocabularyGenerator;
 
     @Transactional
@@ -56,19 +58,24 @@ public class LessonStudyService {
         return languageRepository.findAll().stream().map(Language::getName).collect(Collectors.toList());
     }
 
+    @Transactional
+    public List<String> getAllCourse() {
+        return courseRepository.findAll().stream().map(Course::getTitle).collect(Collectors.toList());
+    }
 
-    public SaveUnknownWordResponse saveUnknownWord(SaveUnknownWordsDto saveUnknownWordsDto) throws AccessRestrictedToStudentsException {
+
+    public SaveUnknownWordResponse saveUnknownWord(SaveUnknownWordsDto saveUnknownWordsDto) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<Lesson> lessonOptional = lessonRepository.findById(saveUnknownWordsDto.getLessonId());
         if (lessonOptional.isEmpty()){
-            throw new RuntimeException("Lesson ID does not exist!");
+            throw new LessonNotFoundException();
         }
 
         Lesson lesson = lessonOptional.get();
 
         if (!rightVerifier.hasAccessToTheDataOf(student,lesson)){
-            throw new RuntimeException("You have no access to this Data");
+            throw new InvalidCourseAccessException();
         }
 
         Optional<CourseEnrollment> courseEnrollmentOptional = courseEnrollmentRepository
@@ -105,20 +112,20 @@ public class LessonStudyService {
                      .build();
     }
 
-
-public ByteArrayInputStream getLessonVocabularyInPdf(Long lessonId) throws AccessRestrictedToStudentsException {
+@Transactional
+public ByteArrayInputStream getLessonVocabularyInPdf(Long lessonId) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<Lesson> lessonOptional = lessonRepository.findById(lessonId);
 
         if (lessonOptional.isEmpty()){
-            throw new RuntimeException("Lesson does not exist");
+            throw new LessonNotFoundException();
         }
 
         Lesson lesson = lessonOptional.get();
 
     if (!rightVerifier.hasAccessToTheDataOf(student, lesson)) {
-        throw new RuntimeException("You have no access to the data!");
+        throw new InvalidCourseAccessException();
     }
 
     List<WordToLearn> wordToLearnList = wordToLearnRepository.findByLesson(lesson);

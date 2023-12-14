@@ -1,5 +1,9 @@
-package com.cbt.cbtapp.lesson;
+package com.cbt.cbtapp.controller.dataController;
 
+import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
+import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
+import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
+import com.cbt.cbtapp.service.lessonService.LessonManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,33 +20,33 @@ import java.io.IOException;
 @RequestMapping("/api/v1/auth")
 public class LessonManagementController {
 
+
     @Autowired
     private LessonManagementService lessonManagementService;
 
-    @GetMapping("/get_student_lesson_data")
+    @GetMapping("/get_lesson_data")
     public ResponseEntity<?> getLessonData(@RequestParam Long lessonId)  {
         try {
             return new ResponseEntity<>(lessonManagementService.getLessonData(lessonId), HttpStatus.ACCEPTED);
         }
-        catch (RuntimeException exception){
+        catch (RuntimeException | LessonNotFoundException | InvalidCourseAccessException exception){
             return new ResponseEntity<>(exception.getMessage(),HttpStatus.BAD_REQUEST );
         }
     }
 
     @GetMapping(value = "/get_student_lesson_file", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> getLessonFile(@RequestParam Long lessonId) throws IOException {
+    public ResponseEntity<byte[]> getLessonFile(@RequestParam Long lessonId) throws IOException, LessonNotFoundException, InvalidCourseAccessException, AccessRestrictedToStudentsException {
 
-            byte[] file = lessonManagementService.getLessonsFile(lessonId);
+        byte[] file = lessonManagementService.getLessonsFile(lessonId);
 
-            var headers = new HttpHeaders();
-            headers.add("Content-Disposition", "inline; filename=lesson.pdf");
+        var headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=lesson.pdf");
 
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(file);
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
 
     }
-
 }

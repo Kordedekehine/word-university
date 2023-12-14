@@ -7,6 +7,8 @@ import com.cbt.cbtapp.model.User;
 import com.cbt.cbtapp.repository.LanguageRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Instant;
+
 public class UserFactory {
 
     public static User buildUser(UserRequestDto userRequestDto, PasswordEncoder passwordEncoder,
@@ -15,6 +17,7 @@ public class UserFactory {
         User user = userRequestDto.getRole().buildUser(userRequestDto, languageRepository
                 .findByName(userRequestDto.getLanguage()).orElseThrow(LanguageNotFoundException::new));
         user.setCreateRole(userRequestDto.getRole());
+        user.setCreated(Instant.now());
         return user;
     }
 }

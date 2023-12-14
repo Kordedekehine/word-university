@@ -1,4 +1,4 @@
-package com.cbt.cbtapp.controller;
+package com.cbt.cbtapp.controller.authController;
 
 
 import com.cbt.cbtapp.dto.LoginRequestDto;
@@ -9,7 +9,7 @@ import com.cbt.cbtapp.exception.authentication.DuplicateUsernameException;
 import com.cbt.cbtapp.exception.authentication.IncorrectPasswordException;
 import com.cbt.cbtapp.exception.authentication.PasswordMismatchException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
-import com.cbt.cbtapp.service.LoginService;
+import com.cbt.cbtapp.service.userService.LoginService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class RegistrationController {
+public class AuthenticationController {
 
 
      private final LoginService loginService;
 
      @Autowired
-    public RegistrationController(LoginService loginService) {
+    public AuthenticationController(LoginService loginService) {
         this.loginService = loginService;
     }
 
