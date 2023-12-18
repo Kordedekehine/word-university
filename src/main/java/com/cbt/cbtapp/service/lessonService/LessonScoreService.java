@@ -1,7 +1,5 @@
 package com.cbt.cbtapp.service.lessonService;
 
-import com.cbt.cbtapp.Utils.Utils;
-import com.cbt.cbtapp.dto.StudentWithScoreDto;
 import com.cbt.cbtapp.dto.UserResponseDto;
 import com.cbt.cbtapp.model.Score;
 import com.cbt.cbtapp.model.Student;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -93,18 +90,5 @@ public class LessonScoreService {
     }
 
 
-    public List<StudentWithScoreDto> getStudentsWithHighestScores() {
-        List<Object[]> results = scoreRepository.findStudentsWithHighestScores();
 
-        List<StudentWithScoreDto> studentsWithScores = new ArrayList<>();
-
-        for (Object[] result : results) {
-            Student student = (Student) result[0];
-            Integer highestScore = (Integer) result[1];
-
-            studentsWithScores.add(new StudentWithScoreDto(student, highestScore));
-        }
-
-        return studentsWithScores;
-    }
 }

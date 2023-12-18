@@ -47,6 +47,5 @@ public class LessonManagementController {
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
-
     }
 }

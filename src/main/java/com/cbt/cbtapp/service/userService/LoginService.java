@@ -172,4 +172,8 @@ public class LoginService {
                 .build();
     }
 
+    public Long getAllUsers(){
+        return userRepository.count();
+    }
+
 }
