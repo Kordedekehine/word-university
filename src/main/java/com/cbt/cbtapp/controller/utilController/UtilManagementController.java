@@ -1,13 +1,12 @@
 package com.cbt.cbtapp.controller.utilController;
 
 
-import com.cbt.cbtapp.service.lessonService.LessonScoreService;
-import com.cbt.cbtapp.service.lessonService.LessonStudyService;
-import com.cbt.cbtapp.service.userService.LoginService;
+import com.cbt.cbtapp.service.lessonService.ILessonScoreService;
+import com.cbt.cbtapp.service.lessonService.ILessonStudyService;
+import com.cbt.cbtapp.service.userService.ILoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,18 +14,24 @@ import org.springframework.web.bind.annotation.*;
 public class UtilManagementController {
 
     @Autowired
-    private LessonStudyService lessonStudyService;
+    private ILessonStudyService lessonStudyService;
 
     @Autowired
-    private LoginService loginService;
+    private ILoginService loginService;
 
     @Autowired
-    private LessonScoreService lessonScoreService;
+    private ILessonScoreService lessonScoreService;
 
     @GetMapping("/get_student_total_score/{studentId}")
     public ResponseEntity<?> getStudentScores(@PathVariable Long studentId) {
-        return new ResponseEntity<>(lessonScoreService.getStudentScores(studentId), HttpStatus.OK);
+        return new ResponseEntity<>(lessonScoreService.calculateStandingScore(studentId), HttpStatus.OK);
     }
+
+    @GetMapping("/get_current_students_sorted_by_score")
+    public ResponseEntity<?> getStudentsSortedByScore() {
+        return new ResponseEntity<>(lessonScoreService.getStudentsSortedByScore(),HttpStatus.OK);
+    }
+
 
     @GetMapping("/get_current_best_student")
     public ResponseEntity<?> getBestStudent() {

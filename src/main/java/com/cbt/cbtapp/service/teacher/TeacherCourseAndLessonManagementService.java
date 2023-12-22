@@ -4,6 +4,7 @@ import com.cbt.cbtapp.dto.ExtendedTaughtCourseDto;
 import com.cbt.cbtapp.dto.SupervisedCourseDto;
 import com.cbt.cbtapp.dto.TaughtCourseDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersException;
+import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class TeacherCourseAndLessonManagementService {
+public class TeacherCourseAndLessonManagementService implements ITeacherCourseAndLessonManagementService{
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -49,6 +50,7 @@ public class TeacherCourseAndLessonManagementService {
     @Autowired
     private RightVerifier rightVerifier;
 
+    @Override
     public ExtendedTaughtCourseDto createSupervisedCourse(SupervisedCourseDto supervisedCourseDto) throws LanguageNotFoundException, AccessRestrictedToTeachersException {
 
         Teacher teacher = authenticationService.getCurrentTeacher();
@@ -83,6 +85,7 @@ public class TeacherCourseAndLessonManagementService {
         );
     }
 
+    @Override
     public List<TaughtCourseDto> getAllTaughtCourses() throws AccessRestrictedToTeachersException {
         Teacher teacher = authenticationService.getCurrentTeacher();
 
@@ -94,9 +97,10 @@ public class TeacherCourseAndLessonManagementService {
     }
 
 
+    @Override
     public SupervisedLesson saveNewSupervisedLesson(Long courseId, String title,
                                                     MultipartFile file) throws CourseNotFoundException,
-             InvalidCourseAccessException, AccessRestrictedToTeachersException {
+            InvalidCourseAccessException, AccessRestrictedToTeachersException, FileStorageException {
         Teacher teacher = authenticationService.getCurrentTeacher();
 
         Optional<SupervisedCourse> optCourse = supervisedCourseRepository.findById(courseId);
@@ -120,6 +124,7 @@ public class TeacherCourseAndLessonManagementService {
         return savedLesson;
     }
 
+    @Override
     public ExtendedTaughtCourseDto getTaughtCourseData(Long courseId) throws InvalidCourseAccessException, CourseNotFoundException, AccessRestrictedToTeachersException {
         Teacher teacher = authenticationService.getCurrentTeacher();
 

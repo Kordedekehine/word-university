@@ -6,7 +6,7 @@ import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsExcepti
 import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
 import com.cbt.cbtapp.exception.lessons.WordToLearnNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
-import com.cbt.cbtapp.service.lessonService.LessonPracticeService;
+import com.cbt.cbtapp.service.lessonService.ILessonPracticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class ExercisePracticeController {
 
     @Autowired
-    private LessonPracticeService lessonPracticeService;
+    private ILessonPracticeService lessonPracticeService;
 
     @GetMapping(value = "/get_word_problem_question")
     @PreAuthorize("hasAuthority('STUDENT')")

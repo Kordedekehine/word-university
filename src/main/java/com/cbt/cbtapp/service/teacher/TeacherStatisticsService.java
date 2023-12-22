@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class TeacherStatisticsService {
+public class TeacherStatisticsService implements ITeacherStatisticService{
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -41,6 +41,7 @@ public class TeacherStatisticsService {
 
     private RightVerifier rightVerifier;
 
+    @Override
     public CourseStatisticsDto getCourseStatistics(Long courseId) throws CourseNotFoundException, InvalidCourseAccessException, AccessRestrictedToTeachersException {
         Teacher teacher = authenticationService.getCurrentTeacher();
 
@@ -75,7 +76,7 @@ public class TeacherStatisticsService {
         return new CourseStatisticsDto(nrStudents, lessonTitles, avgNrOfUnknownWordsPerLesson);
     }
 
-
+     @Override
     public LessonStatisticsDto getLessonStatistics(Long lessonId) throws LessonNotFoundException, InvalidCourseAccessException, AccessRestrictedToTeachersException {
         Teacher teacher = authenticationService.getCurrentTeacher();
 

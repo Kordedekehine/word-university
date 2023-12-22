@@ -37,7 +37,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class LoginService {
+public class LoginService implements ILoginService{
 
     @Autowired
     private UserRepository userRepository;
@@ -69,6 +69,7 @@ public class LoginService {
 
 
     @Transactional
+    @Override
     public UserRequestDto register(UserRequestDto userRequestDto) throws DuplicateUsernameException, LanguageNotFoundException {
 
         Optional<User> userName = userRepository.findByUserName(userRequestDto.getName());
@@ -95,6 +96,7 @@ public class LoginService {
     }
 
 
+    @Override
     public String updatePassword(PasswordUpdateDto passwordUpdateDto) throws IncorrectPasswordException, PasswordMismatchException, AuthenticationRequiredException {
         User user = authenticationService.getCurrentUser();
 
@@ -112,25 +114,7 @@ public class LoginService {
         return "Password Updated!";
     }
 
-//    public LoginResponseDto login(LoginRequestDto loginRequestDto){
-//
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        loginRequestDto.getName(),loginRequestDto.getPassword()));
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        String jwt = jwtUtils.generateJwtToken(authentication);
-//
-//         AppUser user = (AppUser) authentication.getPrincipal();// = (AppUser) authentication.getPrincipal();
-//
-//        log.info(jwt.toString());
-//
-//        String tokenType = "";
-//
-//        return mapUserToLogin(loginRequestDto,user,jwt,tokenType);
-//
-//    }
-
+    @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -172,6 +156,7 @@ public class LoginService {
                 .build();
     }
 
+    @Override
     public Long getAllUsers(){
         return userRepository.count();
     }

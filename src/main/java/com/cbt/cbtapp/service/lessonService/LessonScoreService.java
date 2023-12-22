@@ -1,5 +1,6 @@
 package com.cbt.cbtapp.service.lessonService;
 
+import com.cbt.cbtapp.Utils.Utils;
 import com.cbt.cbtapp.dto.UserResponseDto;
 import com.cbt.cbtapp.model.Score;
 import com.cbt.cbtapp.model.Student;
@@ -13,11 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class LessonScoreService {
+public class LessonScoreService implements ILessonScoreService{
 
     @Autowired
     private ScoreRepository scoreRepository;
@@ -28,7 +30,19 @@ public class LessonScoreService {
     @Autowired
     private TeacherRepository teacherRepository;
 
-    public List<Score> getStudentScores(Long studentId)  {
+    @Override
+    public List<UserResponseDto> getStudentsSortedByScore() {
+        List<UserResponseDto> allStudents = getAllStudents();
+
+        // Sort students based on their scores in descending order
+        List<UserResponseDto> sortedStudents = allStudents.stream()
+                .sorted(Comparator.comparingInt(student -> -calculateStandingScore(student.getId())))
+                .collect(Collectors.toList());
+
+        return sortedStudents;
+    }
+
+    private List<Score> getStudentScores(Long studentId)  {
 
         return scoreRepository.findByStudentId(studentId);
     }
@@ -40,15 +54,17 @@ public class LessonScoreService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public List<UserResponseDto> getAllStudents() {
 
         List<Student> students = studentRepository.findAll();
         //sort by created date
-       // students.sort((c1, c2) -> c2.getCreated().compareTo(c1.getCreated()));
+        students.sort((c1, c2) -> c2.getCreated().compareTo(c1.getCreated()));
         return students.stream().map(this::mapStudentToResponse).collect(toList());
     }
 
     @Transactional(readOnly = true)
+    @Override
     public List<UserResponseDto> getAllTeachers() {
 
         List<Teacher> teachers = teacherRepository.findAll();
@@ -64,7 +80,7 @@ public class LessonScoreService {
                 .role(student.getCreateRole())
                 .emailAddress(student.getEmail())
                 .language(student.getNativeLanguage().toString())
-             //   .created(Utils.timeAgo(student.getCreated()))
+                .created(Utils.timeAgo(student.getCreated()))
                 .build();
     }
 
@@ -75,10 +91,12 @@ public class LessonScoreService {
                 .role(teacher.getCreateRole())
                 .emailAddress(teacher.getEmail())
                 .language(teacher.getNativeLanguage().toString())
-              //    .created(Utils.timeAgo(teacher.getCreated()))
+                  .created(Utils.timeAgo(teacher.getCreated()))
                 .build();
     }
 
+
+    @Override
     public UserResponseDto getBestStudent() {
 
         List<UserResponseDto> allStudents = getAllStudents();
@@ -88,6 +106,7 @@ public class LessonScoreService {
                 .max(Comparator.comparingInt(student -> calculateStandingScore(student.getId())))
                 .orElse(null);
     }
+
 
 
 

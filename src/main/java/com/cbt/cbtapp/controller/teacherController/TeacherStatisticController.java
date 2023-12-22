@@ -4,6 +4,7 @@ import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersExcepti
 import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
+import com.cbt.cbtapp.service.teacher.ITeacherStatisticService;
 import com.cbt.cbtapp.service.teacher.TeacherStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeacherStatisticController {
 
     @Autowired
-    private TeacherStatisticsService teacherStatisticsService;
+    private ITeacherStatisticService teacherStatisticsService;
 
     @GetMapping("/get_course_statistics")
     public ResponseEntity<?> getCourseStatistics(@RequestParam Long courseId) throws CourseNotFoundException, InvalidCourseAccessException, AccessRestrictedToTeachersException {

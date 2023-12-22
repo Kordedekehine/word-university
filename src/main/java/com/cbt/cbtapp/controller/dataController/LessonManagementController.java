@@ -3,7 +3,7 @@ package com.cbt.cbtapp.controller.dataController;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
 import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
-import com.cbt.cbtapp.service.lessonService.LessonManagementService;
+import com.cbt.cbtapp.service.lessonService.ILessonManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class LessonManagementController {
 
 
     @Autowired
-    private LessonManagementService lessonManagementService;
+    private ILessonManagementService lessonManagementService;
 
     @GetMapping("/get_lesson_data")
     public ResponseEntity<?> getLessonData(@RequestParam Long lessonId)  {
@@ -34,7 +34,7 @@ public class LessonManagementController {
         }
     }
 
-    @GetMapping(value = "/get_student_lesson_file", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/get_student_lesson_file/{lessonId}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getLessonFile(@RequestParam Long lessonId) throws IOException, LessonNotFoundException, InvalidCourseAccessException, AccessRestrictedToStudentsException {
 
         byte[] file = lessonManagementService.getLessonsFile(lessonId);

@@ -4,6 +4,7 @@
 
 This software engineering documentation describes the design and architecture of a learning management system for all kinds of languages. The system aims to efficiently manage both teachers and students in a college like way.  The system will handle various aspects such as user management(enrollment, courses, lessons, scoring,onboarding and all), language translation, and activities monitoring.
 
+Java 17 improved(features) version of Fakaza's language app.
 
 # **Requirements**
 

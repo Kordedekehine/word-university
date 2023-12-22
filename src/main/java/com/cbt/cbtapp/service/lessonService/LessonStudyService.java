@@ -3,6 +3,7 @@ package com.cbt.cbtapp.service.lessonService;
 import com.cbt.cbtapp.dto.SaveUnknownWordResponse;
 import com.cbt.cbtapp.dto.SaveUnknownWordsDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
+import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersException;
 import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.model.*;
@@ -17,12 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class LessonStudyService {
+public class LessonStudyService implements ILessonStudyService{
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -54,16 +57,19 @@ public class LessonStudyService {
     private VocabularyGenerator vocabularyGenerator;
 
     @Transactional
+    @Override
     public List<String> getAllLanguages() {
         return languageRepository.findAll().stream().map(Language::getName).collect(Collectors.toList());
     }
 
     @Transactional
+    @Override
     public List<String> getAllCourse() {
         return courseRepository.findAll().stream().map(Course::getTitle).collect(Collectors.toList());
     }
 
 
+    @Override
     public SaveUnknownWordResponse saveUnknownWord(SaveUnknownWordsDto saveUnknownWordsDto) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 
@@ -113,6 +119,7 @@ public class LessonStudyService {
     }
 
 @Transactional
+@Override
 public ByteArrayInputStream getLessonVocabularyInPdf(Long lessonId) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 
@@ -136,6 +143,9 @@ public ByteArrayInputStream getLessonVocabularyInPdf(Long lessonId) throws Acces
             lesson.getIndexInsideCourse(),
             wordToLearnList);
 }
+
+
+
 }
 
 

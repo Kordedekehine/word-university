@@ -26,6 +26,7 @@ public class Score {
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
+    @Column(nullable = true)
     private int points;
 
 

@@ -28,7 +28,7 @@ import java.util.Random;
 
 @Service
 @Slf4j
-public class LessonPracticeService {
+public class LessonPracticeService implements ILessonPracticeService{
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -58,6 +58,7 @@ public class LessonPracticeService {
     private ScoreRepository scoreRepository;
 
 
+    @Override
     public WordLearningPracticeDto solveWordQuestion(Long lessonId) throws AccessRestrictedToStudentsException, LessonNotFoundException, InvalidCourseAccessException, WordToLearnNotFoundException {
 
         Student student = authenticationService.getCurrentStudent();
@@ -107,6 +108,7 @@ public class LessonPracticeService {
         return new Random().nextBoolean();
     }
 
+    @Override
     public WordLearningPracticeVerifyDto answerWordQuestion(WordLearnAnswersDto wordLearnAnswersDto) throws AccessRestrictedToStudentsException, WordToLearnNotFoundException, InvalidCourseAccessException {
         Student student = authenticationService.getCurrentStudent();
 

@@ -3,10 +3,11 @@ package com.cbt.cbtapp.controller.teacherController;
 import com.cbt.cbtapp.dto.SupervisedCourseDto;
 import com.cbt.cbtapp.dto.TaughtCourseDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersException;
+import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
-import com.cbt.cbtapp.service.teacher.TeacherCourseAndLessonManagementService;
+import com.cbt.cbtapp.service.teacher.ITeacherCourseAndLessonManagementService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ import java.util.List;
 public class TeacherCourseManagementController {
 
     @Autowired
-    private TeacherCourseAndLessonManagementService service;
+    private ITeacherCourseAndLessonManagementService service;
 
     @PostMapping("/create_supervised_course")
     public ResponseEntity<?> createSelfTaughtCourse(@Valid @RequestBody SupervisedCourseDto supervisedCourseDTO) throws LanguageNotFoundException, AccessRestrictedToTeachersException, LanguageNotFoundException {
@@ -33,7 +34,7 @@ public class TeacherCourseManagementController {
     @PostMapping(value = "/add_new_supervised_lesson", consumes =
             MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addNewSelfTaughtLesson(@RequestParam("file") MultipartFile file, @RequestParam(
-            "title") String title, @RequestParam Long courseId) throws CourseNotFoundException, AccessRestrictedToTeachersException, InvalidCourseAccessException {
+            "title") String title, @RequestParam Long courseId) throws CourseNotFoundException, AccessRestrictedToTeachersException, InvalidCourseAccessException, FileStorageException {
        return new ResponseEntity<>(service.saveNewSupervisedLesson(courseId, title, file),HttpStatus.CREATED);
     }
 

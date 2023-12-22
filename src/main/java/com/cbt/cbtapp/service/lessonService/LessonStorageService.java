@@ -1,6 +1,7 @@
 package com.cbt.cbtapp.service.lessonService;
 
 
+import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,42 +17,17 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 @Slf4j
-public class LessonStorageService {
+public class LessonStorageService implements ILessonStorageService{
 
-    //private static final String LESSON_PATH = "lessons/lesson%d.pdf";
-
-    private static final String LESSON_PATH = "C:/codes/cbt-app/lessons/";
-            //lesson%d";
-
-//    @Transactional
-//    public void storeLesson(MultipartFile file, Long lessonId) {
-//        try {
-//            if (file.isEmpty()) {
-//                throw new RuntimeException("Unable to save file! Kindly re-assess the file");
-//            }
-//
-//            Path destinationFile = Paths.get(getLessonFilePath(lessonId));
-//
-//            // Ensure the directory structure exists
-//            Files.createDirectories(destinationFile.getParent());
-//
-//            try (InputStream inputStream = file.getInputStream()) {
-//                // Replace an existing file in the case of an edit
-//                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-//                log.info("STORAGE UPDATE - saved content of lesson {}", lessonId);
-//            }
-//        } catch (IOException e) {
-//            log.error("STORAGE FAILURE - saving content of lesson {} failed", lessonId);
-//            throw new RuntimeException("Failed to store file.", e);
-//        }
-//    }
+    private static final String LESSON_PATH = "C:\\codes\\cbt-app\\lessons/lesson%d.pdf";
 
 
     @Transactional
-    public void storeLesson(MultipartFile file, Long lessonId) {
+    @Override
+    public void storeLesson(MultipartFile file, Long lessonId) throws FileStorageException {
         try {
             if (file == null || file.isEmpty()) {
-                throw new RuntimeException("Unable to save file! Kindly re-assess the file");
+                throw new FileStorageException("Unable to save file! Kindly re-assess the file");
             }
 
             Path destinationFile = Paths.get(getLessonFilePath(lessonId));
@@ -63,22 +39,20 @@ public class LessonStorageService {
                 if (inputStream != null) {
                     // Replace an existing file in the case of an edit
                     Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-                    log.info("STORAGE UPDATE - saved content of lesson {} to ", destinationFile  );
                 } else {
-                    throw new RuntimeException("Input stream is null");
+                    throw new FileStorageException("Input stream is null");
                 }
             }
         } catch (IOException e) {
             log.error("STORAGE FAILURE - saving content of lesson {} failed", lessonId);
-            throw new RuntimeException("Failed to store file.", e);
+            throw new FileStorageException("Failed to store file.", e);
+        } catch (FileStorageException e) {
+            throw new FileStorageException("Failed to store file.",e);
         }
     }
 
-//    public byte[] getLessonFile(Long lessonId) throws IOException {
-//        Path pdfPath = Paths.get(getLessonFilePath(lessonId));
-//        return Files.readAllBytes(pdfPath);
-//    }
 
+    @Override
     public byte[] getLessonFile(Long lessonId) throws IOException {
         Path pdfPath = Paths.get(getLessonFilePath(lessonId) );  // Add ".pdf" extension
 
@@ -89,12 +63,8 @@ public class LessonStorageService {
         return Files.readAllBytes(pdfPath);
     }
 
-//    String getLessonFilePath(Long lessonId) {
-//        // Use Paths.get for file paths
-//        return String.format(LESSON_PATH, lessonId) + ".pdf ";
-//    }
 
-    String getLessonFilePath(Long lessonId) {
+   private String getLessonFilePath(Long lessonId) {
         String path = String.format(LESSON_PATH, lessonId);
         log.info("Constructed Path: {}", Paths.get(path).toAbsolutePath());
         return path;

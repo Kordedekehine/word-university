@@ -3,6 +3,7 @@ package com.cbt.cbtapp.service.student;
 
 import com.cbt.cbtapp.dto.*;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
+import com.cbt.cbtapp.exception.lessons.FileStorageException;
 import com.cbt.cbtapp.exception.students.CourseNotFoundException;
 import com.cbt.cbtapp.exception.students.DuplicateEnrollmentException;
 import com.cbt.cbtapp.exception.students.InvalidCourseAccessException;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class StudentCourseAndLessonManageService {
+public class StudentCourseAndLessonManageService implements IStudentCourseAndLessonManageService{
 
 
     @Autowired
@@ -67,6 +68,7 @@ public class StudentCourseAndLessonManageService {
     private ModelMapper modelMapper;
 
     @Transactional
+    @Override
     public SelfTaughtLessonDto createSelfTaughtCourse(SelfTaughtCourseDto selfTaughtCourseDTO) throws AccessRestrictedToStudentsException, LanguageNotFoundException {
         Student student = authenticationService.getCurrentStudent();
 
@@ -95,6 +97,7 @@ public class StudentCourseAndLessonManageService {
     }
 
 
+    @Override
     public List<EnrolledCourseDto> getAllEnrolledCourses() throws AccessRestrictedToStudentsException {
         Student student = authenticationService.getCurrentStudent();
 
@@ -115,7 +118,8 @@ public class StudentCourseAndLessonManageService {
     }
 
     @Transactional
-    public SelfTaughtLessonResponseDto saveNewSelfTaughtLesson(Long courseId, String title, MultipartFile file) throws AccessRestrictedToStudentsException, CourseNotFoundException, InvalidCourseAccessException {
+    @Override
+    public SelfTaughtLessonResponseDto saveNewSelfTaughtLesson(Long courseId, String title, MultipartFile file) throws AccessRestrictedToStudentsException, CourseNotFoundException, InvalidCourseAccessException, FileStorageException {
         Student student = authenticationService.getCurrentStudent();
 
         Optional<SelfTaughtCourse> optCourse = selfTaughtCourseRepository.findById(courseId);
@@ -144,6 +148,8 @@ public class StudentCourseAndLessonManageService {
         return selfTaughtLessonResponseDto;
     }
 
+    @Transactional
+    @Override
     public ExtendedEnrolledCourseDto getEnrolledCourseData(Long courseId) throws AccessRestrictedToStudentsException, InvalidCourseAccessException, CourseNotFoundException {
         Student student = authenticationService.getCurrentStudent();
 
@@ -169,6 +175,7 @@ public class StudentCourseAndLessonManageService {
                         Lesson::getTitle)));
     }
 
+    @Override
     public String joinSupervisedCourse(Integer joiningCode) throws CourseNotFoundException,
             AccessRestrictedToStudentsException, DuplicateEnrollmentException {
         Student student = authenticationService.getCurrentStudent();

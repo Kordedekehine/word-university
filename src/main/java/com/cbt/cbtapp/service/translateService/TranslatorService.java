@@ -11,7 +11,7 @@ import java.util.Locale;
 
 @Service
 @Slf4j
-public class TranslatorService {
+public class TranslatorService implements ITranslationService{
 
     // the actual API key or other authentication methods for production
     private static final String API_KEY = "TRANSLATE_API_KEY"; //SHISHI I NO GET LOL
@@ -23,6 +23,7 @@ public class TranslatorService {
     }
 
     @Transactional
+    @Override
     public String getTranslation(String word, Language sourceLanguage, Language targetLanguage) {
         if (sourceLanguage.equals(targetLanguage)) {
             return word;
@@ -35,6 +36,7 @@ public class TranslatorService {
         return translation;
     }
 
+    @Override
     public boolean isCorrectTranslation(String word, String translatedWord, Language sourceLanguage, Language targetLanguage) {
         // Compare the source and the target-translated words to know if our translation is correct
         boolean correct =
