@@ -21,5 +21,5 @@ public interface IStudentCourseAndLessonManageService {
 
     ExtendedEnrolledCourseDto getEnrolledCourseData(Long courseId) throws AccessRestrictedToStudentsException, InvalidCourseAccessException, CourseNotFoundException;
 
-    String joinSupervisedCourse(Integer joiningCode) throws CourseNotFoundException, AccessRestrictedToStudentsException, DuplicateEnrollmentException
+    String joinSupervisedCourse(Integer joiningCode) throws CourseNotFoundException, AccessRestrictedToStudentsException, DuplicateEnrollmentException;
 }

@@ -4,6 +4,6 @@ RUN mvn clean package  -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
 COPY --from=build /target/cbt-app-0.0.1-SNAPSHOT.jar cbt-app.jar
-EXPOSE 8080
+EXPOSE 8089
 ENTRYPOINT ["java","-jar","cbt-app.jar"]
 
