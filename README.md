@@ -18,7 +18,7 @@ The system supports the teacher authentication and authorization.
 
 Teacher should be authorized to create a course he/she will supervise.
 
-Teacher should have each lesson sessions in the course where they upload a pdf text for pupils to read .
+Teacher should have each lesson sessions in the course where they upload a pdf text for pupils to read.
 
 The system supports the system giving assignments through pdfs and students will be autograded.
 
@@ -36,6 +36,10 @@ The student can mark and sideline unknown words
 The system allow student to practice random unknown words and earn or lose points
 
 The system allow student to create a personal course and upload pdfs in lessons format
+
+The student can directly translate a random word and even confirm if it is truly correct
+
+The student can further research the word with AI on the platform
 
 
 ## **FLEXIBILITIES**
