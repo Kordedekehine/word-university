@@ -10,7 +10,7 @@ import com.cbt.cbtapp.exception.authentication.IncorrectPasswordException;
 import com.cbt.cbtapp.exception.authentication.PasswordMismatchException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
 
-public interface ILoginService {
+public interface IUserService {
 
     UserRequestDto register(UserRequestDto userRequestDto) throws DuplicateUsernameException, LanguageNotFoundException;
 

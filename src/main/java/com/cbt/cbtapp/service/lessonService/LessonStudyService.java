@@ -2,6 +2,7 @@ package com.cbt.cbtapp.service.lessonService;
 
 import com.cbt.cbtapp.dto.SaveUnknownWordResponse;
 import com.cbt.cbtapp.dto.SaveUnknownWordsDto;
+import com.cbt.cbtapp.dto.SourceLanguageDto;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToStudentsException;
 import com.cbt.cbtapp.exception.authentication.AccessRestrictedToTeachersException;
 import com.cbt.cbtapp.exception.lessons.LessonNotFoundException;
@@ -94,7 +95,7 @@ public class LessonStudyService implements ILessonStudyService{
         }
 
           String translatedWord = translatorService.getTranslation(saveUnknownWordsDto.getWord(),
-                  lesson.getCourse().getLanguage(),student.getNativeLanguage());
+                   lesson.getCourse().getLanguage(),student.getNativeLanguage());
 
         WordToLearn wordToLearn = new WordToLearn(saveUnknownWordsDto.getWord(),translatedWord,0,
                 courseEnrollmentOptional.get(),lesson);

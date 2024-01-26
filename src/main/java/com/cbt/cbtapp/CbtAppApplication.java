@@ -22,7 +22,7 @@ public class CbtAppApplication {
 	@Bean
 	public OpenAPI openApiInformation() {
 		Server localServer = new Server()
-				.url("http://localhost:8080")
+				.url("http://localhost:8089")
 				.description("Localhost Server URL");
 
 		Contact contact = new Contact()
