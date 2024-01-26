@@ -11,6 +11,7 @@ import com.cbt.cbtapp.exception.authentication.DuplicateUsernameException;
 import com.cbt.cbtapp.exception.authentication.IncorrectPasswordException;
 import com.cbt.cbtapp.exception.authentication.PasswordMismatchException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
+import com.cbt.cbtapp.model.Role;
 import com.cbt.cbtapp.model.Student;
 import com.cbt.cbtapp.model.Teacher;
 import com.cbt.cbtapp.model.User;
@@ -37,7 +38,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class LoginService implements ILoginService{
+public class UserService implements IUserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -85,6 +86,8 @@ public class LoginService implements ILoginService{
         } else if (user instanceof Teacher) {
             teacherRepository.save((Teacher) user);
         }
+
+        user.setCreateRole(Role.valueOf(userRequestDto.getRole().toString()));
 
         modelMapper.map(user, userRequestDto);
 

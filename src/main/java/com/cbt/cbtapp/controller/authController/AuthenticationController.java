@@ -9,8 +9,8 @@ import com.cbt.cbtapp.exception.authentication.DuplicateUsernameException;
 import com.cbt.cbtapp.exception.authentication.IncorrectPasswordException;
 import com.cbt.cbtapp.exception.authentication.PasswordMismatchException;
 import com.cbt.cbtapp.exception.students.LanguageNotFoundException;
-import com.cbt.cbtapp.service.userService.ILoginService;
-import com.cbt.cbtapp.service.userService.LoginService;
+import com.cbt.cbtapp.service.userService.IUserService;
+import com.cbt.cbtapp.service.userService.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
 
-     private final ILoginService loginService;
+     private final IUserService loginService;
 
      @Autowired
-    public AuthenticationController(LoginService loginService) {
+    public AuthenticationController(UserService loginService) {
         this.loginService = loginService;
     }
 

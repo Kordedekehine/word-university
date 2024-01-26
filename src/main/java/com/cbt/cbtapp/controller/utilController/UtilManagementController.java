@@ -3,7 +3,7 @@ package com.cbt.cbtapp.controller.utilController;
 
 import com.cbt.cbtapp.service.lessonService.ILessonScoreService;
 import com.cbt.cbtapp.service.lessonService.ILessonStudyService;
-import com.cbt.cbtapp.service.userService.ILoginService;
+import com.cbt.cbtapp.service.userService.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class UtilManagementController {
     private ILessonStudyService lessonStudyService;
 
     @Autowired
-    private ILoginService loginService;
+    private IUserService loginService;
 
     @Autowired
     private ILessonScoreService lessonScoreService;
